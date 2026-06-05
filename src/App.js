@@ -100,6 +100,33 @@ function Create(props) {
     </div>
   );
 }
+
+
+function Update(props) {
+  return (
+    <div>
+      <article>
+        <h1>Update</h1>
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        const title = e.target.title.value;
+        const body = e.target.body.value;
+        console.log(title, body);
+        props.onUpdate(title, body);
+      }}>
+
+      <p>  <input type="text" name="title" placeholder="title"></input>
+        </p>
+        <p>
+        <textarea type="text" name="body" placeholder="body"></textarea>
+        </p>
+        <p> <input type="submit" value="Update"></input></p>
+      </form>
+      </article>
+    </div>
+  );
+}
+
 function App() {
 
   const [mode, setMode] = useState("WELCOME");
@@ -114,6 +141,7 @@ function App() {
 
   const [nextId, setNextId] = useState(4);
 
+let contextControll=null;
 
   if (mode === "WELCOME") {
     content = (
@@ -131,8 +159,11 @@ function App() {
            break; // Stop looping once found!
         }
           }  
-          
       content=<Article title={title} body={body} />
+      contextControll = <li><a href={`/update/` +id } onClick={(e) => {
+        e.preventDefault();
+        setMode("UPDATE");
+      }}> Update</a></li>
   }
    else if (mode === "CREATE") {
     content=<Create onCreate={(_title, _body) => {
@@ -143,7 +174,9 @@ function App() {
       setNextId(nextId + 1);
 
     }}></Create>
-
+  }
+    else if (mode === "UPDATE") {
+      content=<Update></Update>
    
    }
 
@@ -165,13 +198,18 @@ function App() {
       />
 
 {content}
+<ul>
+  <li>
 <a href="/create" onClick={(e) => {
   e.preventDefault();
   setMode("CREATE");
 }}> Create</a>
-
- <a href="/update">Update</a>
- 
+</li>
+<li>
+ {/* <a href="/update">Update</a> */}
+   {contextControll}
+</li>
+</ul>
     </div>
   );
 }
