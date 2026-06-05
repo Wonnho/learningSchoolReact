@@ -76,17 +76,44 @@ function Article(props) {
   );
 }
 
+function Create(props) {
+  return (
+    <div>
+      <article>
+        <h1>Create</h1>
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        const title = e.target.title.value;
+        const body = e.target.body.value;
+        console.log(title, body);
+        props.onCreate(title, body);
+      }}>
+
+      <p>  <input type="text" name="title" placeholder="title"></input>
+        </p>
+        <p>
+        <textarea type="text" name="body" placeholder="body"></textarea>
+        </p>
+        <p> <input type="submit" value="Create"></input></p>
+      </form>
+      </article>
+    </div>
+  );
+}
 function App() {
 
   const [mode, setMode] = useState("WELCOME");
   const [id, setId] = useState(null);
-let content = null;
+  let content = null;
  
-  const topics = [
+  const [topics, setTopics] = useState([
     { id: 1, title: "gold land", body: "Horror" },
     { id: 2, title: "Flight UA94", body: "Terrorism" },
-    { id: 3, title: "Sakarika", body: "Gangstar" },
-  ];
+    { id: 3, title: "Sakarika", body: "Gangstar" }
+  ]);
+
+  const [nextId, setNextId] = useState(4);
+
 
   if (mode === "WELCOME") {
     content = (
@@ -104,8 +131,21 @@ let content = null;
            break; // Stop looping once found!
         }
           }  
+          
       content=<Article title={title} body={body} />
   }
+   else if (mode === "CREATE") {
+    content=<Create onCreate={(_title, _body) => {
+      const newTopic = {title:_title,body:_body,id:nextId};
+      setTopics([...topics, newTopic]);
+      setMode("READ");
+      setId(nextId);
+      setNextId(nextId + 1);
+
+    }}></Create>
+
+   
+   }
 
   return (
     <div>
@@ -125,6 +165,13 @@ let content = null;
       />
 
 {content}
+<a href="/create" onClick={(e) => {
+  e.preventDefault();
+  setMode("CREATE");
+}}> Create</a>
+
+ <a href="/update">Update</a>
+ 
     </div>
   );
 }
